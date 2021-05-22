@@ -1,0 +1,8 @@
+<div class="container">
+    <ul class="list-group">
+        <li class="list-group-item" *ngFor="let item of dataset">
+            {{item.occurred_from}}
+        </li>
+    </ul>
+    <input class="btn btn-primary" type="button" value="Add" (click)="new()">
+</div>
