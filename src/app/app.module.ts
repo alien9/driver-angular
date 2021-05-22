@@ -23,6 +23,8 @@ import { HammerModule } from "@angular/platform-browser";
 import {DatePipe} from '@angular/common';
 import { InputComponent } from './input/input.component';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { ListComponent } from './list/list.component';
+import { LocationComponent } from './location/location.component';
 
 
 @NgModule({
@@ -32,7 +34,9 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
     LoginComponent,
     FilterbarComponent,
     IndexComponent,
-    InputComponent
+    InputComponent,
+    ListComponent,
+    LocationComponent
   ],
   imports: [
     BrowserModule,

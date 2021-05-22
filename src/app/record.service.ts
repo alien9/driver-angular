@@ -25,6 +25,14 @@ export class RecordService {
     })
     return this.http.get<any[]>(environment.api+'/api/recordschemas/'+s+'/', { headers: headers })
   }
+  upload(obj: Object): Observable<any[]> {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Token ' + localStorage.getItem('token')
+    })
+    return this.http.post<any[]>(environment.api+'/api/records/', obj, { headers: headers })
+  }
+  
 
   getTileKey(o: Object, q:any): Observable<any[]>{
     let headers = new HttpHeaders({
