@@ -6,21 +6,21 @@ import { environment } from '../environments/environment'
   providedIn: 'root'
 })
 export class AuthService {
+
+  getBackend():string {
+    return localStorage.getItem("backend")||environment.api
+  }
   logout() {
     localStorage.removeItem('config');
     localStorage.removeItem('token');
     localStorage.removeItem('record_schema');
-    /*let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Token ' + localStorage.getItem('token')
-    })*/
-    return;// this.http.get(environment.api +  '/api-auth/logout/?format=json', { headers: headers });
+    return;
   }
   constructor(private http: HttpClient) { }
   login(user, pass) {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
     })
-    return this.http.post(environment.api + "/api-token-auth/", { username: user, password: pass }, { headers: headers });
+    return this.http.post(this.getBackend() + "/api-token-auth/", { username: user, password: pass }, { headers: headers });
   }
 }

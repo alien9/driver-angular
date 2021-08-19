@@ -1,3 +1,36 @@
-.add{
-    float:right;
+.add,
+.locate {}
+
+.add {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+.tablita {
+    position: relative;
+}
+
+.commands {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.console {
+    position: absolute;
+    bottom: 0;
+    background-color: white;
+}
+
+.subcontainer {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 15px;
 }

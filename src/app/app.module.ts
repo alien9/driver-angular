@@ -25,6 +25,8 @@ import { InputComponent } from './input/input.component';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { ListComponent } from './list/list.component';
 import { LocationComponent } from './location/location.component';
+import { LogoutComponent } from './logout/logout.component';
+import { OrderedFieldsPipe } from './ordered-fields.pipe';
 
 
 @NgModule({
@@ -36,7 +38,9 @@ import { LocationComponent } from './location/location.component';
     IndexComponent,
     InputComponent,
     ListComponent,
-    LocationComponent
+    LocationComponent,
+    LogoutComponent,
+    OrderedFieldsPipe
   ],
   imports: [
     BrowserModule,

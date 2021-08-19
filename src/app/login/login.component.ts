@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
     submitted = false;
     returnUrl: string;
     err: string;
-    
+    @Output() entering = new EventEmitter<any>()
 
     constructor(
         private formBuilder: FormBuilder,
@@ -39,9 +39,13 @@ export class LoginComponent implements OnInit {
             username: ['', Validators.required],
             password: ['', Validators.required]
         });
-
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position)=>{
+localStorage.setItem("position", `${position.coords.latitude}\t${position.coords.longitude}`)
+            })
+        }
         // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/list';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
     // convenience getter for easy access to form fields
@@ -80,7 +84,7 @@ export class LoginComponent implements OnInit {
                                         this.recordService.getRecordSchema(schema_uuid).subscribe(
                                             sata=>{
                                                 localStorage.setItem('record_schema', JSON.stringify(sata));
-                                                this.router.navigate([this.returnUrl]);
+                                                this.entering.emit(null)
                                             }
                                         )
                                     }else{

@@ -1,0 +1,34 @@
+.container {
+    position: relative;
+    height: 100%;
+    overflow-y: scroll;
+    width: 100%;
+    margin: 0;
+    padding: 15px;
+}
+
+.commands {
+    position: absolute;
+    bottom: 0;
+    padding: 15px;
+}
+
+.grayed {
+    color: gray
+}
+
+.list-group-item {
+    position: relative;
+}
+
+.status {
+    color: maroon;
+    right: 0;
+    top: 0;
+    position: absolute;
+    padding: 10px 15px;
+}
+
+.banal {
+    font-weight: bold;
+}

@@ -30,6 +30,7 @@
     "dts-gen": "^0.6.0",
     "igniteui-angular": "^10.2.2",
     "leaflet": "^1.7.1",
+    "leaflet-gps": "^1.7.7",
     "leaflet-utfgrid": "^0.3.0",
     "ngx-material-timepicker": "^5.5.3",
     "rxjs": "^6.6.3",
