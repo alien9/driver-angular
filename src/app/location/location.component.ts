@@ -1,6 +1,8 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import * as L from 'leaflet';
-import { Gps } from 'node_modules/leaflet-gps'
+import 'leaflet.locatecontrol'
+
+
 import { environment } from '../../environments/environment';
 
 const iconRetinaUrl = './assets/marker-icon-2x.png';
@@ -79,10 +81,10 @@ export class LocationComponent implements OnInit {
     this.locateEvent.emit(null)
   }
   onMapReady(map){
-    var gps = new Gps({
-      autoActive:true,
-      autoCenter:true
-    })
-    map.addControl(gps )
+    var gps=null
+    L.control.locate().addTo(map);
+        //var gps = new Gps({
+    //}/)
+    //gps.addTo(map);
   }
 }

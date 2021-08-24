@@ -29,6 +29,9 @@ export class InputComponent implements OnInit {
   public clock: string = ''
   private index: number
   private recordIndex: number
+  public images: File[] = []
+  public preview: any[] = []
+  public selectedPreview: number
   date: Date;
   @ViewChild('form') mainForm;
   constructor(
@@ -83,6 +86,8 @@ export class InputComponent implements OnInit {
 
   }
   cancel(): void {
+    this.images=[]
+    this.preview=[]
     this.pane = 'listing'
   }
   add(t) {
@@ -103,7 +108,6 @@ export class InputComponent implements OnInit {
     d.setHours(t[0])
     d.setMinutes(t[1])
 
-    //this.registry['geom'] = `"SRID=4326;POINT{lng} {lat})"`
     this.registry['occurred_from'] = d.toISOString()
     this.registry['occurred_to'] = d.toISOString()
     this.registry['schema'] = this.schema_uuid
@@ -114,9 +118,9 @@ export class InputComponent implements OnInit {
     if (!ds) ds = '[]';
     let dataset = JSON.parse(ds);
     if (typeof this.index == 'number')
-      dataset[this.index] = this.registry
+      dataset[this.index] = {record:this.registry, images:this.images, preview: this.preview}
     else
-      dataset.push(this.registry);
+      dataset.push({record:this.registry, images:this.images, preview: this.preview});
     localStorage.setItem("dataset", JSON.stringify(dataset));
     this.pane = 'listing'
   }
@@ -162,14 +166,15 @@ export class InputComponent implements OnInit {
     console.log("Loading")
     if (e) {
       this.loadRecordSchema()
+      this.images=e.images
+      this.preview=e.preview
       this.title = "Edit Record"
-      this.registry = e
+      this.registry = e.record
       this.index = e.index
-      delete e.index
-      this.date = new Date(Date.parse(e['occurred_from']))
+      this.date = new Date(Date.parse(e.record['occurred_from']))
       this.clock = `${this.date.getHours()}:${this.date.getMinutes()}`
-      if (e.geom) {
-        let cords = e.geom.match(/POINT\((\S+) (\S+)\)/)
+      if (e.record.geom) {
+        let cords = e.record.geom.match(/POINT\((\S+) (\S+)\)/)
         if (cords.length > 0) {
           this.longitude = cords[1]
           this.latitude = cords[2]
@@ -205,5 +210,39 @@ export class InputComponent implements OnInit {
     this.authenticationService.logout();
     this.pane = 'login'
   }
+  cross() {
+    console.log("cross")
+    navigator.geolocation.getCurrentPosition((position) => {
+      console.log("Got position", position.coords);
+      this.latitude = position.coords.latitude;
+      this.longitude = position.coords.longitude;
+    });
+  }
+  tableExists(o: any) {
+    return true
+  }
+  onFileSelected(e: FileList) {
+    let i = 0;
+    var reader = new FileReader();
 
+    while (i < e.length) {
+      this.images.push(e[i])
+      let p = this.preview
+      var reader = new FileReader();
+      reader.onloadend = function (e) {
+        p.push({ 'src': reader.result })
+      }
+      reader.readAsDataURL(e[i]);
+      i++
+    }
+  }
+  selectPreview(i: number) {
+    this.selectedPreview = i
+  }
+  removePreview(i: number) {
+    if (i < 0) return
+    if (i >= this.images.length) return
+    this.images.splice(i, 1);
+    this.preview.splice(i, 1);
+  }
 }

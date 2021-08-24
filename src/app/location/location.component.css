@@ -24,6 +24,9 @@ body {
     bottom: 0;
     right: 0;
     z-index: 10000;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    padding: 20px;
+}
+
+.mapper {
+    width: 6em;
 }

@@ -1,11 +1,11 @@
 <div class="container">
     <h2>Pick Location</h2>
-    <div class=map #map leaflet [leafletLayersControl]="layersControl" [leafletOptions]="options" [leafletLayersControlOptions]="controlOptions" [leafletLayers]="layers" (leafletClick)=setLocation($event)>
+    <div class=map #map leaflet (leafletMapReady)=onMapReady($event) [leafletLayersControl]="layersControl" [leafletOptions]="options" [leafletLayersControlOptions]="controlOptions" [leafletLayers]="layers" (leafletClick)=setLocation($event)>
     </div>
     <div class=save>
-        <div class="form-group">
-            <input class="btn btn-primary" type="button" value="Set" (click)="save()" [disabled]=!position> &nbsp;
-            <input class="btn btn-primary" type="button" value="Cancel" (click)="cancel()">
+        <div>
+            <input class="btn btn-primary mapper" type="button " value="Set " (click)="save() " [disabled]=!position> &nbsp;
+            <input class="btn btn-primary mapper" type="button " value="Cancel " (click)="cancel() ">
         </div>
     </div>
 </div>

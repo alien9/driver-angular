@@ -63,12 +63,17 @@ export class ListComponent implements OnInit {
     let uploadable=this.dataset.filter((data)=>!data['uploaded'])
     
     if(uploadable.length>0){
-      this.recordService.upload(uploadable[0])
+      this.recordService.upload(uploadable[0]['record'])
       .subscribe(
         data => {
           console.log(data)
           uploadable[0]["status"]="OK"
           uploadable[0]["uploaded"]=true
+          uploadable[0]["uuid"]=data['uuid']
+          while(uploadable[0]["images"].length){
+            console.log("upload image:")
+            let img=uploadable[0]["images"].pop()
+          }
           this.saveDataset()
           this.upload()
         },
@@ -78,7 +83,7 @@ export class ListComponent implements OnInit {
           uploadable[0]["error"]=err.data
           uploadable[0]["uploaded"]=true
           this.saveDataset()
-          this.upload()
+          this.uploading=false
         },
         () => {console.log('yay')}
       )
@@ -95,5 +100,11 @@ export class ListComponent implements OnInit {
   cleanup() {
     this.dataset = this.dataset.filter((item) => !item['uploaded'])
     localStorage.setItem("dataset", JSON.stringify(this.dataset));
+  }
+  isClean(){
+    return !this.dataset.filter((datum)=>datum["uploaded"]).length
+  }
+  isUp(){
+    return !this.dataset.filter((datum)=>!datum["uploaded"]).length
   }
 }
