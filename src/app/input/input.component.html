@@ -1,5 +1,7 @@
 <div class="container" *ngIf="pane=='inputing'">
     <div class="subcontainer">
+        <input id="image-loader" (change)=loadImage($event)>
+        <input id="image-form-loader" type="hidden" (change)=appendImage($event)>
         <form>
             <div class=maindescriptor>
                 <h2>{{title}}</h2>
@@ -101,7 +103,7 @@
         <div class="maindescriptor">
             <div class="form-group">
                 <button class="btn btn-primary" type="button" (click)="fileInput.click()">Take Photo</button>
-                <input style="display:none" accept="image/*" (change)="onFileSelected($event.target.files)" #fileInput type="file">
+                <input style="display:none" id="photo-uploader" accept="image/*" (change)="onFileSelected($event.target.files)" #fileInput type="file">
             </div>
         </div>
         <div class="maindescriptor">

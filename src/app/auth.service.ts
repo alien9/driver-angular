@@ -21,6 +21,9 @@ export class AuthService {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
     })
-    return this.http.post(this.getBackend() + "/api-token-auth/", { username: user, password: pass }, { headers: headers });
+    let b=this.getBackend()
+    let a=`${b}/api-token-auth/`
+    console.log(a)
+    return this.http.post(a, { username: user, password: pass }, { headers: headers });
   }
 }

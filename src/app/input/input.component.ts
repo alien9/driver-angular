@@ -31,6 +31,8 @@ export class InputComponent implements OnInit {
   private recordIndex: number
   public images: File[] = []
   public preview: any[] = []
+  private imagery: any[] = []
+  private current_pix: any
   public selectedPreview: number
   date: Date;
   @ViewChild('form') mainForm;
@@ -77,6 +79,7 @@ export class InputComponent implements OnInit {
     })
     this.registry['data'] = data;
     this.description = JSON.stringify(this.tables);
+    this.imagery.push([])
   }
 
   getRecordType(): string {
@@ -86,9 +89,11 @@ export class InputComponent implements OnInit {
 
   }
   cancel(): void {
-    this.images=[]
-    this.preview=[]
+    this.images = []
+    this.preview = []
     this.pane = 'listing'
+    if (!this.index)
+      this.imagery.pop()
   }
   add(t) {
     this.registry['data'][t].push({ "_localId": uuid() });
@@ -118,11 +123,14 @@ export class InputComponent implements OnInit {
     if (!ds) ds = '[]';
     let dataset = JSON.parse(ds);
     if (typeof this.index == 'number')
-      dataset[this.index] = {record:this.registry, images:this.images, preview: this.preview}
+      dataset[this.index] = { record: this.registry, images: this.images, preview: this.preview }
     else
-      dataset.push({record:this.registry, images:this.images, preview: this.preview});
+      dataset.push({ record: this.registry, images: this.images, preview: this.preview });
     localStorage.setItem("dataset", JSON.stringify(dataset));
     this.pane = 'listing'
+    if (this.index) {
+      this.imagery.push(this.imagedata)
+    }
   }
   isValid() {
     if (!this.date)
@@ -166,11 +174,15 @@ export class InputComponent implements OnInit {
     console.log("Loading")
     if (e) {
       this.loadRecordSchema()
-      this.images=e.images
-      this.preview=e.preview
+      this.images = e.images
+      this.preview = e.preview
       this.title = "Edit Record"
       this.registry = e.record
       this.index = e.index
+      while (this.imagery.length < this.index + 1) {
+        this.imagery.push([])
+      }
+      if (!this.imagery[this.index]) this.imagery[this.index] = []
       this.date = new Date(Date.parse(e.record['occurred_from']))
       this.clock = `${this.date.getHours()}:${this.date.getMinutes()}`
       if (e.record.geom) {
@@ -244,5 +256,20 @@ export class InputComponent implements OnInit {
     if (i >= this.images.length) return
     this.images.splice(i, 1);
     this.preview.splice(i, 1);
+  }
+  loadImage(e) {
+    console.log("Loading an image")
+    console.log(e)
+    if (e.target && e.target.value) {
+      this.preview.push({ 'src': "data:image/jpeg;base64," + e.target.value })
+    }
+    this.imagery[this.index || this.imagery.length - 1].push('')
+  }
+  appendImage(e) {
+    console.log("appending")
+    let element = this.imagery[this.index || this.imagery.length - 1]
+    if (e.target && e.target.value) {
+      element[element.length - 1] += e.target.value
+    }
   }
 }
