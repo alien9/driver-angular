@@ -1,11 +1,18 @@
 <div class="container" *ngIf="pane=='inputing'">
     <div class="subcontainer">
-        <input id="image-loader" (change)=loadImage($event)>
-        <input id="image-form-loader" type="hidden" (change)=appendImage($event)>
+        <input id="image-loader" (change)=loadImage($event) type="hidden">
+        <input id="file-name" [(ngModel)]=filename type="hidden">
+        <input id="state" type="hidden" value="input">
+        <input type=hidden id="location-loader" name=position (click)=loadLocation($event)>
         <form>
             <div class=maindescriptor>
                 <h2>{{title}}</h2>
-
+                <div class="form-group">
+                    <div class="imagepreview" *ngFor="let img of preview; let i = index" (click)=selectPreview(i) [ngClass]="(selectedPreview==i)?'selected':''">
+                        <img class=imageframe [src]="img.src">
+                        <button value=X (click)=removePreview(i) class=exclude> x </button>
+                    </div>
+                </div>
                 <div class="form-group">
                     <mat-label>latitude</mat-label>
                     <input matInput [(ngModel)]="latitude" name="latitude">
@@ -16,9 +23,9 @@
                 </div>
                 <div class="form-group">
                     <button (click)="locate()" class="btn btn-primary">locate</button> &nbsp;
-                    <button (click)="cross()" class="btn  btn-primary">
+                    <!--button (click)="cross()" class="btn  btn-primary">
                         <i class="fa fa-crosshairs" aria-hidden="true"></i>
-                    </button>
+                    </button-->
                 </div>
                 <div class="form-group">
                     <mat-form-field>
@@ -36,7 +43,7 @@
             </div>
             <div *ngFor="let table of tables" class="{{table}} tablita">
                 <div class=tabhead>
-                    <div class=subtitle *ngIf="!schema['definitions'][table].multiple">{{schema['definitions'][table].title}}</div>
+                    <div class=subtitle *ngIf="!(schema['definitions'][table].multiple)">{{schema['definitions'][table].title}}</div>
                     <div class=subtitle *ngIf="schema['definitions'][table].multiple">{{schema['definitions'][table].plural_title}}</div>
 
                     <div class="commands">
@@ -53,7 +60,7 @@
                             </div>
                             <div class="form-group" *ngIf="schema['definitions'][table].properties[fieldname].fieldType=='integer'">
                                 <mat-label>{{fieldname}}</mat-label>
-                                <input pattern="\d*" name="{{fieldname}}" class="form-control numeric" [(ngModel)]="registry.data[table][fieldname]" name="{{table}}-{{fieldname}}" />
+                                <input pattern="\d*" name="{{fieldname}}" class="form-control numeric" [(ngModel)]="registry.data[table][fieldname]" name="{{table}}-{{fieldname}}" type=number />
                             </div>
                             <div class="form-group selectable" *ngIf="schema['definitions'][table].properties[fieldname].fieldType=='selectlist'" id="{{fieldname}}">
                                 <mat-label>{{fieldname}}</mat-label>
@@ -76,7 +83,7 @@
                                 </div>
                                 <div class="form-group" *ngIf="schema['definitions'][table].properties[fieldname].fieldType=='integer'">
                                     <mat-label>{{fieldname}}</mat-label>
-                                    <input pattern="\d*" name="{{fieldname}}" class="form-control" [(ngModel)]="u[fieldname]" />
+                                    <input pattern="\d*" name="{{fieldname}}" class="form-control" [(ngModel)]="u[fieldname]" type=number />
                                 </div>
                                 <div class="form-group selectable" *ngIf="schema['definitions'][table].properties[fieldname].fieldType=='selectlist'" id="select-{{table}}-{{i}}-{{fieldname}}">
                                     <mat-label>{{fieldname}}</mat-label>
@@ -100,16 +107,10 @@
 
             </div>
         </form>
-        <div class="maindescriptor">
+        <div class="maindescriptor" *ngIf="show_photo">
             <div class="form-group">
                 <button class="btn btn-primary" type="button" (click)="fileInput.click()">Take Photo</button>
                 <input style="display:none" id="photo-uploader" accept="image/*" (change)="onFileSelected($event.target.files)" #fileInput type="file">
-            </div>
-        </div>
-        <div class="maindescriptor">
-            <div class="imagepreview" *ngFor="let img of preview; let i = index" (click)=selectPreview(i) [ngClass]="(selectedPreview==i)?'selected':''">
-                <img class=imageframe src={{img.src}}>
-                <button value=X (click)=removePreview(i) class=exclude> x </button>
             </div>
         </div>
         <div class="form-group">

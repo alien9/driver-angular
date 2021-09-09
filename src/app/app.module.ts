@@ -20,14 +20,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input'; 
 import { MatButtonModule } from '@angular/material/button';
 import { HammerModule } from "@angular/platform-browser";
-import {DatePipe} from '@angular/common';
+import { DatePipe, LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { InputComponent } from './input/input.component';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { ListComponent } from './list/list.component';
 import { LocationComponent } from './location/location.component';
 import { LogoutComponent } from './logout/logout.component';
 import { OrderedFieldsPipe } from './ordered-fields.pipe';
-
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -57,9 +57,9 @@ import { OrderedFieldsPipe } from './ordered-fields.pipe';
     MatNativeDateModule,
     MatButtonModule,
     HammerModule,
-    NgxMaterialTimepickerModule
+    NgxMaterialTimepickerModule,
   ],
-  providers: [DatePipe],
+  providers: [DatePipe, {provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

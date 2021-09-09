@@ -63,14 +63,13 @@
 }
 
 .imageframe {
-    width: auto;
-    height: auto;
+    width: 100%;
 }
 
 .imagepreview {
     margin: 5px;
     padding: 1px;
-    width: 168px;
+    width: 20%;
     display: inline-block;
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
     position: relative;

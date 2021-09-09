@@ -3,6 +3,8 @@ import { RecordService } from '../record.service';
 import { Router } from '@angular/router';
 import { v4 as uuid } from 'uuid';
 import { AuthService } from '../auth.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
@@ -28,14 +30,14 @@ export class InputComponent implements OnInit {
   private longitude: number;
   public clock: string = ''
   private index: number
-  private recordIndex: number
   public images: File[] = []
   public preview: any[] = []
-  private imagery: any[] = []
-  private current_pix: any
-  public selectedPreview: number
-  date: Date;
+  public filename: string;
+  public show_photo=false
+  selectedPreview: number;
+  date: Date=new Date();
   @ViewChild('form') mainForm;
+
   constructor(
     private recordService: RecordService,
     private router: Router,
@@ -67,7 +69,7 @@ export class InputComponent implements OnInit {
     if (!this.schema) return
     let data = {};
     this.tables = Object.keys(this.schema['properties'])
-      .sort((k, j) => { return this.schema['definitions'][k].propertyOrder - this.schema['definitions'][j].propertyOrder })
+      .sort((k, j) => { return this.schema['properties'][k].propertyOrder - this.schema['properties'][j].propertyOrder })
     this.tables.forEach(t => {
       data[t] = (this.schema['definitions'][t].multiple) ? [] : { "_localId": uuid() };
       let defs = this.schema['definitions'][t]
@@ -79,7 +81,6 @@ export class InputComponent implements OnInit {
     })
     this.registry['data'] = data;
     this.description = JSON.stringify(this.tables);
-    this.imagery.push([])
   }
 
   getRecordType(): string {
@@ -92,8 +93,7 @@ export class InputComponent implements OnInit {
     this.images = []
     this.preview = []
     this.pane = 'listing'
-    if (!this.index)
-      this.imagery.pop()
+
   }
   add(t) {
     this.registry['data'][t].push({ "_localId": uuid() });
@@ -128,9 +128,6 @@ export class InputComponent implements OnInit {
       dataset.push({ record: this.registry, images: this.images, preview: this.preview });
     localStorage.setItem("dataset", JSON.stringify(dataset));
     this.pane = 'listing'
-    if (this.index) {
-      this.imagery.push(this.imagedata)
-    }
   }
   isValid() {
     if (!this.date)
@@ -170,6 +167,13 @@ export class InputComponent implements OnInit {
       this.longitude = p.lng
     }
   }
+  loadLocation(e){
+    if(e && e.target && e.target.value){
+      let ll=e.target.value.split(/,/).map((k)=>parseFloat(k))
+      if(ll.length==2)
+        this.setLocation({lat:ll[0], lng:ll[1]})
+    }
+  }
   loadRecord(e: any) {
     console.log("Loading")
     if (e) {
@@ -179,10 +183,6 @@ export class InputComponent implements OnInit {
       this.title = "Edit Record"
       this.registry = e.record
       this.index = e.index
-      while (this.imagery.length < this.index + 1) {
-        this.imagery.push([])
-      }
-      if (!this.imagery[this.index]) this.imagery[this.index] = []
       this.date = new Date(Date.parse(e.record['occurred_from']))
       this.clock = `${this.date.getHours()}:${this.date.getMinutes()}`
       if (e.record.geom) {
@@ -195,8 +195,8 @@ export class InputComponent implements OnInit {
     } else {
       this.title = "New Record"
       this.initDataset()
-      this.clock = null
-      this.date = null
+      this.date = new Date()
+      this.clock = `${this.date.getHours()}:${this.date.getMinutes()}`
       this.index = null
       this.latitude = null
       this.longitude = null
@@ -241,35 +241,26 @@ export class InputComponent implements OnInit {
       this.images.push(e[i])
       let p = this.preview
       var reader = new FileReader();
-      reader.onloadend = function (e) {
-        p.push({ 'src': reader.result })
+      let fn=e[i].name
+      reader.onloadend = function (el) {
+        p.push({ 'src': reader.result, 'filename': fn })
       }
       reader.readAsDataURL(e[i]);
       i++
     }
   }
-  selectPreview(i: number) {
-    this.selectedPreview = i
-  }
   removePreview(i: number) {
     if (i < 0) return
-    if (i >= this.images.length) return
-    this.images.splice(i, 1);
     this.preview.splice(i, 1);
   }
   loadImage(e) {
     console.log("Loading an image")
-    console.log(e)
+    console.log(e.target.value)
     if (e.target && e.target.value) {
-      this.preview.push({ 'src': "data:image/jpeg;base64," + e.target.value })
+      this.preview.push({ 'filename':this.filename, 'src': `data:image/jpeg;base64,${e.target.value}` })
     }
-    this.imagery[this.index || this.imagery.length - 1].push('')
   }
-  appendImage(e) {
-    console.log("appending")
-    let element = this.imagery[this.index || this.imagery.length - 1]
-    if (e.target && e.target.value) {
-      element[element.length - 1] += e.target.value
-    }
+  selectPreview(e){
+    this.selectedPreview=e;
   }
 }

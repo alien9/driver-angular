@@ -4,9 +4,26 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'orderedFields'
 })
 export class OrderedFieldsPipe implements PipeTransform {
-
-  transform(properties: unknown, ...args: unknown[]): unknown {
-      return Object.keys(properties).filter((fu)=>!properties[fu].options || !properties[fu].options['hidden'])
+  transform(value: any, ...args: unknown[]): unknown {
+    let keys = [];
+    for (let key in value) {
+        console.log(key)
+        if(value[key].options && value[key].options.hidden==true){
+          console.log("OPTIONS");
+          console.log(value[key].options);
+        }else{
+          keys.push(key);
+        }
+    }
+    keys.sort((n1,n2) => {
+        if (value[n1].propertyOrder > value[n2].propertyOrder) {
+            return 1;
+        }
+        if (value[n1].propertyOrder < value[n2].propertyOrder) {
+            return -1;
+        }
+        return 0;
+    })
+    return keys;
   }
-
 }

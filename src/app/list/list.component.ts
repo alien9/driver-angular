@@ -13,13 +13,11 @@ export class ListComponent implements OnInit {
   public dataset: Array<object>
   @Output() record = new EventEmitter<object>()
   public uploading:boolean=false
-
   constructor(
     private recordService: RecordService,
     private locationService: LocationService,
     private router: Router,
     private r: ActivatedRoute,) {
-
   }
 
   ngOnInit(): void {
@@ -27,24 +25,7 @@ export class ListComponent implements OnInit {
     if (!recordSchema) {
       return;
     }
-    let ds = localStorage.getItem("dataset");
-    if (!ds) ds = '[]';
-    this.dataset = JSON.parse(ds);
-    let upload = this.r.snapshot.queryParamMap.get('upload')
-    if (upload) {
-      this.locationService.getPosition().then(pos => {
-        console.log(`Position: ${pos.lng} ${pos.lat}`);
-      });
-      let d: any;
-      while (d = this.dataset.pop()) {
-        this.recordService.upload(d).subscribe(
-          sata => {
-            alert("OK")
-            console.log(sata)
-          }
-        )
-      }
-    }
+    this.dataset = JSON.parse(localStorage.getItem("dataset") || "[]");
   }
   new(): void {
     console.log("new record")
@@ -61,7 +42,6 @@ export class ListComponent implements OnInit {
   upload(){
     this.uploading=true
     let uploadable=this.dataset.filter((data)=>!data['uploaded'])
-    
     if(uploadable.length>0){
       this.recordService.upload(uploadable[0]['record'])
       .subscribe(
@@ -106,5 +86,12 @@ export class ListComponent implements OnInit {
   }
   isUp(){
     return !this.dataset.filter((datum)=>!datum["uploaded"]).length
+  }
+  getDataset(){
+    return JSON.stringify(this.dataset)
+  }
+  loadDataset(){
+    this.dataset = [];
+    this.dataset=JSON.parse(localStorage.getItem("dataset") || "[]")
   }
 }
